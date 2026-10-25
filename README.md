@@ -11,10 +11,6 @@ Ramsey pair, an echo train; the backup divider carries a stick
 spectrum); bullets are spectral sticks; citations are quiet
 margin annotations.
 
-| | |
-|---|---|
-| ![Title page](screenshots/title.png) | ![Part divider](screenshots/divider.png) |
-| ![Lists](screenshots/lists.png) | ![Waveforms](screenshots/waveforms.png) |
 
 ## Features
 
