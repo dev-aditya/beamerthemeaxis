@@ -1,0 +1,298 @@
+% ============================================================
+%  beamerthemeaxis
+%
+%  AXIS — a lab monograph typeset on the frequency axis.
+%
+%  A Beamer theme for physics talks: warm paper, near-black ink,
+%  hairline rules, one accent color, and a footline that is an
+%  NMR frequency axis with part-boundary ticks and a progress
+%  dot. Part dividers carry real pulse waveforms (GRAPE steps,
+%  chirp, Ramsey pair, echo train; the backup divider carries a
+%  stick spectrum). Bullets are spectral sticks. Citations are
+%  quiet margin annotations.
+%
+%  Designed for:  \documentclass[aspectratio=169,11pt]{beamer}
+%  Font:          Latin Modern recommended (\usepackage{lmodern})
+%
+%  Author:  Aditya Dev
+%  License: TBD
+% ============================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeaxis}[2026/10/25 v1.1 Axis beamer theme]
+
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+
+% ------------------------------------------------------------
+% Options
+%   \axisset{fa=..., fb=..., fc=..., total=...}
+%   fa/fb/fc : fractions of the axis where part boundaries sit
+%              (set them to (last frame of part k)/(total) once
+%              the deck is final; defaults 0.25 / 0.50 / 0.75)
+%   total    : frame count the progress dot saturates at;
+%              0 = use \inserttotalframenumber (default)
+% ------------------------------------------------------------
+\pgfkeys{
+  /axis/.cd,
+  fa/.store in=\axis@fa,
+  fb/.store in=\axis@fb,
+  fc/.store in=\axis@fc,
+  total/.store in=\axis@total,
+  fa=0.25, fb=0.50, fc=0.75, total=0,
+}
+\newcommand{\axisset}[1]{\pgfkeys{/axis/.cd,#1}}
+
+% Title-page extras (all optional; empty by default)
+\def\axis@advisor{}
+\newcommand{\axisadvisor}[1]{\gdef\axis@advisor{#1}}
+\def\axis@committee{}
+\newcommand{\axiscommittee}[1]{\gdef\axis@committee{#1}}
+\def\axis@logo{}
+\newcommand{\axislogo}[1]{\gdef\axis@logo{#1}}
+
+% ------------------------------------------------------------
+% Palette: paper + ink + one accent
+% (redefine any of these after \usetheme{axis} to reskin)
+% ------------------------------------------------------------
+\definecolor{paper}{HTML}{FBFAF6}
+\definecolor{ink}{HTML}{16181D}
+\definecolor{hair}{HTML}{9AA0A8}
+\definecolor{axisblue}{HTML}{1D4ED8}
+\definecolor{axisorange}{HTML}{C2410C}
+\definecolor{axisgreen}{HTML}{047857}
+\definecolor{axisred}{HTML}{B91C1C}
+\definecolor{axisgray}{HTML}{334155}
+% legacy aliases (source deck compatibility)
+\colorlet{bssblue}{axisblue}
+\colorlet{bssorange}{axisorange}
+\colorlet{bssgreen}{axisgreen}
+\colorlet{bssred}{axisred}
+\colorlet{bssgray}{axisgray}
+
+\setbeamercolor{background canvas}{bg=paper}
+\setbeamercolor{normal text}{fg=ink}
+\setbeamercolor{structure}{fg=axisblue}
+\setbeamercolor{alerted text}{fg=axisred}
+\setbeamercolor{example text}{fg=axisgreen}
+\setbeamercolor{frametitle}{fg=ink}
+\setbeamercolor{title}{fg=ink}
+\setbeamercolor{footline}{fg=ink!60}
+
+\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
+\setbeamerfont{block title}{size=\normalsize, series=\bfseries}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{bibliography item}{}
+\setbeamersize{text margin left=1.05cm, text margin right=1.05cm}
+
+% ------------------------------------------------------------
+% Frame title: oversized ink + accent rule (in-body)
+% ------------------------------------------------------------
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \vspace*{0.24cm}%
+  {\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle\par}%
+  \vspace{0.22em}%
+  \smash{\rlap{\color{axisblue}\rule{1.15cm}{1.7pt}\color{hair}\rule{\dimexpr\textwidth-1.15cm\relax}{0.4pt}}}\par
+  \vspace{-0.35cm}%
+}
+
+% ------------------------------------------------------------
+% Footline: the frequency axis
+% ------------------------------------------------------------
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+    \begin{tikzpicture}[x=1cm, y=1cm]
+      \useasboundingbox (0,0) rectangle (\the\paperwidth, 0.46);
+      \fill[paper] (0,0) rectangle (\the\paperwidth, 0.46);
+      \draw[hair, line width=0.4pt] (0.075\paperwidth,0.17) -- (0.925\paperwidth,0.17);
+      \draw[hair, line width=0.4pt] (0.075\paperwidth,0.09) -- (0.075\paperwidth,0.25);
+      \draw[hair, line width=0.4pt] (0.925\paperwidth,0.09) -- (0.925\paperwidth,0.25);
+      \foreach \f in {\axis@fa,\axis@fb,\axis@fc}%
+        \draw[hair, line width=0.4pt] ({0.075\paperwidth+0.85\paperwidth*\f},0.09) -- ({0.075\paperwidth+0.85\paperwidth*\f},0.25);
+      {\tiny\color{ink!55}%
+        \node at ({0.075\paperwidth+0.85\paperwidth*\axis@fa*0.5},0.10) {I};
+        \node at ({0.075\paperwidth+0.85\paperwidth*(\axis@fa+\axis@fb)*0.5},0.10) {II};
+        \node at ({0.075\paperwidth+0.85\paperwidth*(\axis@fb+\axis@fc)*0.5},0.10) {III};
+        \node at ({0.075\paperwidth+0.85\paperwidth*(1+\axis@fc)*0.5},0.10) {IV};}
+      \ifdim\axis@total pt>0pt
+        \pgfmathsetmacro{\axisttl}{\axis@total}%
+      \else
+        \pgfmathsetmacro{\axisttl}{\inserttotalframenumber}%
+      \fi
+      \pgfmathsetmacro{\prog}{min(1.0, \insertframenumber/\axisttl)}%
+      \fill[axisblue] ({0.075\paperwidth+0.85\paperwidth*\prog},0.17) circle (0.055);
+      \node[anchor=east, inner sep=0pt] at (0.925\paperwidth,0.38)%
+        {\tiny\color{ink!55}\insertframenumber/\inserttotalframenumber};
+    \end{tikzpicture}%
+  }%
+}
+
+% ------------------------------------------------------------
+% Blocks: flat tinted cards, tight padding
+% ------------------------------------------------------------
+\setbeamercolor{block title}{bg=axisblue!7, fg=axisblue}
+\setbeamercolor{block body}{bg=axisblue!7, fg=ink}
+\setbeamercolor{block title alerted}{bg=axisred!6, fg=axisred}
+\setbeamercolor{block body alerted}{bg=axisred!6, fg=ink}
+\setbeamercolor{block title example}{bg=axisgreen!7, fg=axisgreen!85!black}
+\setbeamercolor{block body example}{bg=axisgreen!7, fg=ink}
+\setbeamertemplate{block begin}{%
+  \begin{beamercolorbox}[colsep*=0.45ex, rounded=true]{block title}
+    \usebeamerfont{block title}\usebeamercolor[fg]{block title}\insertblocktitle
+  \end{beamercolorbox}\nointerlineskip
+  \begin{beamercolorbox}[colsep*=0.5ex, rounded=true]{block body}}
+\setbeamertemplate{block end}{\end{beamercolorbox}\vskip0.4ex}
+\setbeamertemplate{block begin alerted}{%
+  \begin{beamercolorbox}[colsep*=0.45ex, rounded=true]{block title alerted}
+    \usebeamerfont{block title}\usebeamercolor[fg]{block title alerted}\insertblocktitle
+  \end{beamercolorbox}\nointerlineskip
+  \begin{beamercolorbox}[colsep*=0.5ex, rounded=true]{block body alerted}}
+\setbeamertemplate{block end alerted}{\end{beamercolorbox}\vskip0.4ex}
+\setbeamertemplate{block begin example}{%
+  \begin{beamercolorbox}[colsep*=0.45ex, rounded=true]{block title example}
+    \usebeamerfont{block title}\usebeamercolor[fg]{block title example}\insertblocktitle
+  \end{beamercolorbox}\nointerlineskip
+  \begin{beamercolorbox}[colsep*=0.5ex, rounded=true]{block body example}}
+\setbeamertemplate{block end example}{\end{beamercolorbox}\vskip0.4ex}
+
+% ------------------------------------------------------------
+% Lists: spectral-stick markers + air
+% \smash: zero-height marker box, so the tikz stick never
+% inflates line height
+% ------------------------------------------------------------
+\setbeamertemplate{itemize item}{\smash{\tikz[baseline=-0.55ex]{\draw[axisblue, line width=1.05pt] (0,-0.12) -- (0,0.34);}}\hspace{0.3em}}
+\setbeamertemplate{itemize subitem}{\smash{\tikz[baseline=-0.55ex]{\draw[axisorange, line width=0.9pt] (0,-0.10) -- (0,0.26);}}\hspace{0.3em}}
+\setbeamertemplate{itemize subsubitem}{\smash{\tikz[baseline=-0.55ex]{\draw[axisorange, line width=0.9pt] (0,-0.08) -- (0,0.2);}}\hspace{0.3em}}
+\setbeamertemplate{itemize body begin}{\itemsep=0.12em}
+\setbeamertemplate{enumerate body begin}{\itemsep=0.12em}
+\setbeamertemplate{enumerate item}{\textcolor{axisblue}{\bfseries\arabic{enumi}.}}
+\setbeamertemplate{enumerate subitem}{\textcolor{axisblue}{\bfseries\alph{enumii}.}}
+
+% ------------------------------------------------------------
+% Credits: quiet margin annotations
+% Starts its own paragraph so it never merges into a preceding
+% figure/waveform line.
+% ------------------------------------------------------------
+\newcommand{\credit}[1]{\par\vspace{0.35em}{\scriptsize\color{ink!60}#1}\par}
+
+% ------------------------------------------------------------
+% Divider waveforms (ink on hairline baseline)
+% ------------------------------------------------------------
+\newcommand{\wavebaseline}{%
+  \draw[hair, line width=0.4pt] (0,0) -- (13.3,0);
+  \draw[hair, line width=0.4pt] (0,-0.09) -- (0,0.09);
+  \draw[hair, line width=0.4pt] (13.3,-0.09) -- (13.3,0.09);}
+% GRAPE: piecewise-constant control amplitudes
+\newcommand{\wavegrape}{\begin{tikzpicture}[x=1cm, y=1cm]
+  \wavebaseline
+  \foreach \i/\a in {0/0.30, 1/-0.55, 2/0.65, 3/-0.25, 4/0.45, 5/-0.70, 6/0.30, 7/0.55, 8/-0.45, 9/0.50, 10/-0.35, 11/0.60, 12/-0.55, 13/0.40, 14/-0.65, 15/0.35}
+    \draw[ink, line width=1.05pt] ({0.83125*\i+0.03},{\a}) -- ({0.83125*(\i+1)-0.03},{\a});
+\end{tikzpicture}}
+% Chirp: frequency sweep
+\newcommand{\wavechirp}{\begin{tikzpicture}[x=1cm, y=1cm]
+  \wavebaseline
+  \draw[ink, line width=0.95pt] plot[domain=0:13.3, samples=680, smooth] (\x, {0.72*sin(18.3*\x*\x)});
+\end{tikzpicture}}
+% Ramsey: two pi/2 pulses, then damped fringes
+\newcommand{\waveramsey}{\begin{tikzpicture}[x=1cm, y=1cm]
+  \wavebaseline
+  \fill[axisblue!85] (2.1,-1.0) rectangle (2.36,1.0);
+  \fill[axisblue!85] (7.3,-1.0) rectangle (7.56,1.0);
+  \draw[ink, line width=0.95pt] plot[domain=7.62:13.3, samples=330, smooth] (\x, {0.78*sin(120*\x)*exp(-0.72*(\x-7.62))});
+\end{tikzpicture}}
+% Echo train: decaying / refocused envelope with pi pulses
+\newcommand{\waveecho}{\begin{tikzpicture}[x=1cm, y=0.8cm]
+  \wavebaseline
+  \draw[ink!75, line width=0.75pt] plot[domain=0:5.55, samples=200, smooth] (\x, {0.85*exp(-0.22*\x)});
+  \draw[ink!75, line width=0.75pt] plot[domain=0:5.55, samples=200, smooth] (\x, {-0.85*exp(-0.22*\x)});
+  \draw[ink!75, line width=0.75pt] plot[domain=5.85:9.0, samples=120, smooth] (\x, {-0.48+0.30*(\x-5.85)});
+  \draw[ink!75, line width=0.75pt] plot[domain=5.85:9.0, samples=120, smooth] (\x, {0.48-0.30*(\x-5.85)});
+  \draw[ink!75, line width=0.75pt] plot[domain=9.3:12.6, samples=120, smooth] (\x, {-0.21+0.17*(\x-9.3)});
+  \draw[ink!75, line width=0.75pt] plot[domain=9.3:12.6, samples=120, smooth] (\x, {0.21-0.17*(\x-9.3)});
+  \fill[axisblue!85] (5.55,-1.0) rectangle (5.85,1.0);
+  \fill[axisblue!85] (9.0,-1.0) rectangle (9.3,1.0);
+\end{tikzpicture}}
+% Backup: the stick spectrum
+\newcommand{\wavespectrum}{\begin{tikzpicture}[x=1cm, y=1cm]
+  \wavebaseline
+  \foreach \x/\h in {0.5/0.32, 1.15/0.55, 1.9/0.28, 2.6/0.72, 3.3/0.20, 4.0/0.48, 4.7/0.85, 5.5/0.25, 6.2/0.60, 6.9/0.15, 7.6/0.40, 8.8/0.30, 9.5/0.65, 10.3/0.22, 11.0/0.52, 11.8/0.35, 12.5/0.18}
+    \draw[ink, line width=1.1pt] (\x,0) -- (\x,\h);
+  \draw[axisblue, line width=1.3pt] (8.2,0) -- (8.2,1.12);
+\end{tikzpicture}}
+
+% ------------------------------------------------------------
+% Part dividers: ghost numeral + ink title + waveform
+%   \partdivider{Title}{Subtitle}  — auto-numbered 01, 02, ...
+%     (waveform cycles: GRAPE, chirp, Ramsey, echo, spectrum...)
+%   \backupdivider{Title}{Subtitle}
+%   \axisdividerpage{Numeral}{Title}{Subtitle}{waveform macro}
+% ------------------------------------------------------------
+\newcounter{axispart}
+\newcommand{\axisdividerpage}[4]{% #1 ghost, #2 title, #3 sub, #4 waveform
+\begin{frame}[plain]
+  \vspace*{1.05cm}
+  \begin{minipage}{\textwidth}
+    {\color{axisblue!32}\fontsize{46}{46}\selectfont\bfseries #1}\par
+    \vspace{0.05em}
+    {\color{ink}\LARGE\bfseries #2}\par
+    \vspace{0.55em}
+    {\color{ink!72}\large #3}\par
+  \end{minipage}
+  \vfill
+  #4\par
+  \vspace{0.65cm}
+\end{frame}}
+\newcommand{\partdivider}[2]{%
+  \stepcounter{axispart}%
+  \ifnum\value{axispart}=1 \def\axisnum{01}\let\axiswave\wavegrape
+  \else\ifnum\value{axispart}=2 \def\axisnum{02}\let\axiswave\wavechirp
+  \else\ifnum\value{axispart}=3 \def\axisnum{03}\let\axiswave\waveramsey
+  \else\ifnum\value{axispart}=4 \def\axisnum{04}\let\axiswave\waveecho
+  \else \def\axisnum{0\arabic{axispart}}\let\axiswave\wavespectrum
+  \fi\fi\fi\fi
+  \axisdividerpage{\axisnum}{#1}{#2}{\axiswave}}
+\newcommand{\backupdivider}[2]{%
+  \axisdividerpage{B}{#1}{#2}{\wavespectrum}}
+
+% ------------------------------------------------------------
+% Title page: editorial
+%   \title{...}       (use \\ for line breaks)
+%   \subtitle{...}    small-caps kicker line (optional)
+%   \author{...}
+%   \date{...}
+%   \axisadvisor{...}     small gray line (optional)
+%   \axiscommittee{...}   small gray line (optional)
+%   \axislogo{path}       bottom-right logo (optional)
+% ------------------------------------------------------------
+\setbeamertemplate{title page}{%
+  \vspace*{0.8cm}
+  \begin{flushleft}
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\fontsize{29}{34}\selectfont\bfseries\inserttitle\par}
+    \vspace{0.5em}
+    {\color{axisblue}\rule{2.6cm}{1.7pt}}\par
+    \vspace{0.8em}
+    \ifx\insertsubtitle\empty\else{\large\scshape\color{ink!80}\insertsubtitle\par}\vspace{0.9em}\fi
+    {\normalsize\bfseries\insertauthor\par}%
+    \ifx\axis@advisor\empty\else\vspace{0.25em}{\small\color{ink!75}\axis@advisor\par}\fi
+    \ifx\axis@committee\empty\else\vspace{0.2em}{\small\color{ink!75}\axis@committee\par}\fi
+    \vspace{0.55em}
+    {\small\color{ink!55}\insertdate\par}
+  \end{flushleft}
+  \vfill
+  \begin{tikzpicture}[x=1cm, y=1cm]
+    \draw[hair, line width=0.4pt] (0,0) -- (13.3,0);
+    \draw[hair, line width=0.4pt] (0,-0.09) -- (0,0.09);
+    \draw[hair, line width=0.4pt] (13.3,-0.09) -- (13.3,0.09);
+    \draw[axisblue!55, line width=0.9pt] plot[domain=0:13.3, samples=680, smooth] (\x, {0.5*sin(18.3*\x*\x)});
+  \end{tikzpicture}\par
+  \vspace{0.6cm}
+  \ifx\axis@logo\empty\else
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[anchor=south east, fill=paper, inner sep=2pt] at ([xshift=-1.35cm, yshift=1.95cm]current page.south east)
+      {\includegraphics[height=0.85cm]{\axis@logo}};
+  \end{tikzpicture}\fi
+}
+
+\endinput

@@ -1,0 +1,137 @@
+% ============================================================
+%  Axis demo deck — every theme feature in 14 frames
+%  Build: pdflatex demo.tex (3 passes)
+% ============================================================
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,booktabs,graphicx}
+
+\usetheme{axis}
+
+% --- customize (all optional) ---
+\title{A Demonstration\\ of the Axis Theme}
+\subtitle{Seminar Talk}
+\author{A.\ Author}
+\date{October 2026}
+\axisadvisor{Advisor: Prof.\ A.\ Advisor}
+\axiscommittee{Committee: Prof.\ X \quad$\cdot$\quad Prof.\ Y}
+% \axislogo{logo.png}          % bottom-right logo (optional)
+% \axisset{fa=0.25, fb=0.5, fc=0.75, total=0}
+
+\begin{document}
+
+% ================= TITLE =================
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\partdivider{Introduction}{Why this theme exists}
+
+% ================= CONTENT =================
+\begin{frame}{Lists: Spectral-Stick Bullets}
+  \begin{itemize}
+    \item Level-one items carry a blue spectral stick.
+    \item Wrapped lines re-indent to the text column, and the
+          stick never inflates line spacing (it is \emph{smashed}
+          to zero height).
+      \begin{itemize}
+        \item Level two carries a shorter orange stick.
+          \begin{itemize}
+            \item Level three, a shorter one still.
+          \end{itemize}
+      \end{itemize}
+    \item Enumerated items use bold blue numerals:
+      \begin{enumerate}
+        \item first,
+        \item second.
+      \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Blocks: Flat Tinted Cards}
+  \begin{block}{A block}
+    Blocks are flat tinted cards --- no beamer title bars.
+  \end{block}
+  \begin{alertblock}{An alerted block}
+    For warnings, problems, and honest caveats.
+  \end{alertblock}
+  \begin{exampleblock}{An example block}
+    For results and takeaways.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Equations and Credits}
+  The theme sets no math fonts --- Latin Modern throughout:
+  \[
+    \mathbf{H}(t) \;=\; \mathbf{H}_0 \;+\; \sum_{k} u_k(t)\,\mathbf{C}_k,
+    \qquad
+    \lvert\psi\rangle \;\mapsto\; e^{-i\mathbf{H}t}\lvert\psi\rangle.
+  \]
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Two-column layouts align at the top.
+        \item Charts, tables, and figures behave as usual.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{A block in a column}
+        Cards inside columns work too.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \credit{Author, Journal \textbf{1}, 123 (2025).}
+\end{frame}
+
+\partdivider{Methods}{The pulse waveforms}
+
+\begin{frame}{Divider Waveforms I}
+  Divider waveforms are usable anywhere:
+  \par\vspace{0.5em}
+  \wavegrape\par\vspace{0.6em}
+  \wavechirp
+  \credit{GRAPE steps; chirp.}
+\end{frame}
+
+\begin{frame}{Divider Waveforms II}
+  \par\vspace{0.2em}
+  \waveramsey\par\vspace{0.5em}
+  \waveecho\par\vspace{0.5em}
+  \wavespectrum
+  \credit{Ramsey pair; echo train; stick spectrum.}
+\end{frame}
+
+\partdivider{Results}{Reading the frequency axis}
+\partdivider{Outlook}{Fourth part, echo-train waveform}
+
+\begin{frame}{The Frequency-Axis Footline}
+  \begin{itemize}
+    \item The footline is an axis: hairline with end ticks, part
+          boundaries at fractions \texttt{fa}, \texttt{fb}, \texttt{fc}.
+    \item Roman numerals label the four parts.
+    \item A blue dot marks the current frame:
+          $\mathrm{dot} = \mathrm{frame}/\texttt{total}$.
+    \item Set the geometry once the deck is final:\\[0.3em]
+      \texttt{\textbackslash axisset\{fa=0.236, fb=0.418, fc=0.727, total=55\}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+  \begin{center}
+    \Large\bfseries Thank you\\[0.6em]
+    \large Questions?
+  \end{center}
+\end{frame}
+
+% ================= BACKUP =================
+\backupdivider{Backup}{Anticipated questions}
+
+\begin{frame}{B1: A Backup Slide}
+  Backup slides keep the axis footline; the divider carries a
+  stick spectrum with one highlighted line.
+  \credit{Provenance note.}
+\end{frame}
+
+\end{document}
