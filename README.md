@@ -164,8 +164,7 @@ Palette names: `paper`, `ink`, `hair`, `axisblue`, `axisorange`,
 
 ## License
 
-TBD — a `LICENSE` file will be added once a license is chosen
-(LPPL 1.3c and MIT are both under consideration).
+LPPL 1.3c — [LaTeX Project Public License](https://www.latex-project.org/lppl/lppl-1-3c.txt). See `LICENSE`. Modified versions must be renamed or clearly marked as changed; the Current Maintainer is Aditya Dev.
 
 ## Author
 
