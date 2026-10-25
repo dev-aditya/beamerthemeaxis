@@ -34,7 +34,7 @@
 %  screenshots/.
 % ============================================================
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{beamerthemeaxis}[2026/10/25 v1.1 Axis beamer theme]
+\ProvidesPackage{beamerthemeaxis}[2026/10/25 v1.2 Axis beamer theme]
 
 \RequirePackage{tikz}
 \usetikzlibrary{calc}
@@ -59,10 +59,16 @@
 \newcommand{\axisset}[1]{\pgfkeys{/axis/.cd,#1}}
 
 % Title-page extras (all optional; empty by default)
-\def\axis@advisor{}
-\newcommand{\axisadvisor}[1]{\gdef\axis@advisor{#1}}
-\def\axis@committee{}
-\newcommand{\axiscommittee}[1]{\gdef\axis@committee{#1}}
+% Affiliation: use the standard beamer \institute{...} macro.
+% Generic info lines: \axisextrainfo{...} may be used any number of
+% times; the lines stack below the affiliation in quiet gray.
+\def\axis@info{}
+\newcommand{\axisextrainfo}[1]{%
+  \ifx\axis@info\empty
+    \gdef\axis@info{#1}%
+  \else
+    \g@addto@macro\axis@info{\par\vspace{0.219em}#1}%
+  \fi}
 \def\axis@logo{}
 \newcommand{\axislogo}[1]{\gdef\axis@logo{#1}}
 
@@ -278,8 +284,10 @@
 %   \subtitle{...}    small-caps kicker line (optional)
 %   \author{...}
 %   \date{...}
-%   \axisadvisor{...}     small gray line (optional)
-%   \axiscommittee{...}   small gray line (optional)
+%   \institute{...}       affiliation line under the author (optional,
+%                         standard beamer macro)
+%   \axisextrainfo{...}        generic info line; repeatable — each call
+%                         adds a line (advisor, committee, event, ...)
 %   \axislogo{path}       bottom-right logo (optional)
 % ------------------------------------------------------------
 \setbeamertemplate{title page}{%
@@ -291,8 +299,8 @@
     \vspace{0.8em}
     \ifx\insertsubtitle\empty\else{\large\scshape\color{ink!80}\insertsubtitle\par}\vspace{0.9em}\fi
     {\normalsize\bfseries\insertauthor\par}%
-    \ifx\axis@advisor\empty\else\vspace{0.25em}{\small\color{ink!75}\axis@advisor\par}\fi
-    \ifx\axis@committee\empty\else\vspace{0.2em}{\small\color{ink!75}\axis@committee\par}\fi
+    \ifx\insertinstitute\empty\else\vspace{0.25em}{\small\color{ink!75}\insertinstitute\par}\fi
+    \ifx\axis@info\empty\else\vspace{0.25em}{\small\color{ink!75}\axis@info\par}\fi
     \vspace{0.55em}
     {\small\color{ink!55}\insertdate\par}
   \end{flushleft}

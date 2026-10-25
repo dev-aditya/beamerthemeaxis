@@ -65,8 +65,9 @@ directory.
 \subtitle{Seminar Talk}                  % small-caps kicker
 \author{A.\ Author}
 \date{October 2026}
-\axisadvisor{Advisor: Prof.\ A.\ Advisor}
-\axiscommittee{Committee: Prof.\ X, Prof.\ Y}
+\institute{Department of Chemistry \quad$\cdot$\quad University of Somewhere}
+\axisextrainfo{Seminar Series}             % repeatable: each call adds a line
+\axisextrainfo{slides: example.org/axis}  % any extra info: event, advisor, URL, ...
 \axislogo{logo.png}                      % bottom-right, optional
 \axisset{fa=0.25, fb=0.50, fc=0.75, total=0}
 
